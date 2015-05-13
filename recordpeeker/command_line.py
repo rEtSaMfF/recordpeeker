@@ -7,6 +7,7 @@ def parse_args(argv):
     parser = argparse.ArgumentParser("Test")
     parser.add_argument("--port", "-p", type=int, default=8080, help="Specify the port recordpeeker runs on")
     parser.add_argument("--verbosity", "-v", default=0, type=int, choices=[0,1,2,3], help="Spews more info. 1: prints the path of each request. 2: prints the content of unknown requests. 3: Also print the content of known requests.")
+    parser.add_argument("--upload", dest='upload', action='store_true', help="Upload anonymous data to a central database.")
     return parser.parse_args(argv[1:])
 
 def launch():
@@ -16,7 +17,7 @@ def launch():
     args = parse_args(sys.argv)
     if sys.argv[1:]:
         arglist = " ".join(sys.argv[1:])
-        scriptargs = '-s "{0}" "{1}"'.format(script, arglist)
+        scriptargs = '-s "{0}" {1}'.format(script, arglist)
     else:
         scriptargs = '-s "{0}"'.format(script)
     sys.argv = [sys.argv[0], scriptargs, '-q']

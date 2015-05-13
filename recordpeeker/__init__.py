@@ -11,6 +11,23 @@ def json_decode(string):
     return json.loads(string.decode('utf-8-sig'))
 
 
+def anonymize_data(data):
+    """
+    Remove the user_id from the data.
+    """
+    battle = data.get("battle")
+    if battle is not None:
+        for buddy in battle["buddy"]:
+            buddy["ability_panels"][0]["uid"] = 0
+
+    party = data.get("party")
+    if party is not None:
+        party["uid"] = 0
+
+    user = data.get("user")
+    if user is not None:
+        user["id"] = 0
+
 class Equipment(dict):
     def __init__(self, sourcedict):
         dict.__init__(self, **sourcedict)

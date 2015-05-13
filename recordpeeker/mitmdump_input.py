@@ -1,6 +1,4 @@
-import json
-import shlex
-import os
+import requests
 import socket
 import heapq
 from collections import OrderedDict, defaultdict
@@ -8,8 +6,8 @@ from collections import OrderedDict, defaultdict
 from libmproxy.protocol.http import decoded
 from tabulate import tabulate
 
-from recordpeeker import Equipment, ITEMS, BATTLES, DUNGEONS, slicedict, best_equipment
-from recordpeeker.dispatcher import Dispatcher
+from recordpeeker import Equipment, ITEMS, BATTLES, DUNGEONS, slicedict, best_equipment, anonymize_data
+from recordpeeker.dispatcher import Dispatcher, dump_json
 
 def get_display_name(enemy):
     for child in enemy["children"]:
@@ -67,6 +65,21 @@ def handle_get_battle_init_data(data):
                 tbl.append([round, enemyname, "nothing"])
     print tabulate(tbl, headers="firstrow")
     print ""
+
+    global args
+    if args.upload:
+        anonymize_data(data)
+        data["action"] = "get_battle_init_data"
+        r = requests.post("https://ffrk-retsam.rhcloud.com/post", json=data)
+        if args.verbosity >= 2:
+            try:
+                r = r.json()
+            except:
+                print ("Upload data failed catastrophically")
+            else:
+                if args.verbosity >= 3:
+                    print ("Data upload results:")
+                    print (dump_json(r))
 
 def handle_party_list(data):
     wanted = "name series_id acc atk def eva matk mdef mnd series_acc series_atk series_def series_eva series_matk series_mdef series_mnd"
