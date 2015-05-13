@@ -27,6 +27,7 @@ def anonymize_data(data):
     user = data.get("user")
     if user is not None:
         user["id"] = 0
+        user["name"] = "Tyro"
 
 class Equipment(dict):
     def __init__(self, sourcedict):
